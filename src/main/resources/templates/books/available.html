@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Book store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img src="/images/bookstore.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+            Book Store</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/books/cart" sec:authorize="hasAuthority('USER')">
+
+                        <img src="/images/shopping-cart_118089.png" alt="Logo" width="25" height="25" class="d-inline-block align-text-top">
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/books/home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/books/available">Available Books</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/books/user_books" sec:authorize="hasAuthority('USER')">My Books</a>
+                </li>
+                <li class="nav-item">
+                    <span sec:authorize="isAuthenticated">
+                        <a class="nav-link" th:href="@{/logout}">
+                            Logout
+                        </a>
+                    </span>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Dropdown
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </li>
+
+            </ul>
+            <div sec:authorize="hasAuthority('ADMIN')">
+                <a class="nav-link" href="/books/create" >New Books Register</a>
+            </div>
+            <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <h1 class="text-center my-4">Books</h1>
+    <div class="text-center my-4" sec:authorize="hasAuthority('ADMIN')">
+        <a class="btn btn-primary" href="/books/create" >Add book</a>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Author</th>
+            <!--            <th>Annotation</th>-->
+            <th>Genre</th>
+            <th>Pages</th>
+            <th>Price</th>
+            <th>Image</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}">
+            <td th:text="${book.id}"></td>
+            <td th:text="${book.name}"></td>
+            <td th:text="${book.author}"></td>
+            <!--            <td th:text="${book.annotation}"></td>-->
+            <td th:text="${book.genre}"></td>
+            <td th:text="${book.pages} + 'стр.'" ></td>
+            <td th:text="${book.price} + '$'"></td>
+
+            <td>
+                <img th:src="@{'/images/' +  ${book.imageBook}}" alt="..." width="100">
+            </td>
+
+            <td style="white-space: nowrap">
+                <a class="btn btn-primary btn-sm" th:href="@{/books/edit(id=${book.id})}" sec:authorize="hasAuthority('ADMIN')">Edit</a>
+                <a class="btn btn-secondary btn-sm" th:href="@{/books/user_books/{id}(id=${book.id})}" sec:authorize="hasAuthority('USER')">Add To Mybook</a>
+                <a class="btn btn-secondary btn-sm" th:href="@{/books/cart/{id}(id=${book.id})}" >
+                    <img src="/images/shopping-cart_118089.png" alt="Logo" width="25" height="25" class="d-inline-block align-text-top">
+                </a>
+                <a class="btn btn-danger btn-sm" th:href="@{/books/delete(id=${book.id})}" onclick="return confirm('Are you sure?')" sec:authorize="hasAuthority('ADMIN')">Delete</a>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
